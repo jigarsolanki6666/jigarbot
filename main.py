@@ -2,8 +2,6 @@ import logging
 import os
 import sys
 import asyncio
-import threading
-from http.server import HTTPServer, BaseHTTPRequestHandler
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     ApplicationBuilder,
@@ -17,8 +15,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # ✅ Your bot token from BotFather
-BOT_TOKEN = os.getenv('BOT_TOKEN')
-CHANNEL_ID = int(os.getenv('CHANNEL_ID'))
+BOT_TOKEN = '7980614882:AAGqQzD55pC859_IIJfWgl2eN9H8DzUtX7s'  # Replace with your token
+# ✅ Your channel ID (must be a negative number, e.g., -100...)
+CHANNEL_ID = -1001244012856  # Replace with your channel ID
 
 # ✅ Function to approve join requests and send welcome DM
 async def approve_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -105,8 +104,8 @@ async def handle_member_status(update: Update, context: ContextTypes.DEFAULT_TYP
         except Exception as e:
             logger.warning(f"Couldn't send farewell DM to {user.full_name}: {e}")
 
-# ✅ Start the Telegram Bot in a thread
-def start_bot():
+# ✅ Run the bot
+if __name__ == '__main__':
     # Fix for Windows event loop policy
     if sys.platform.startswith('win') and sys.version_info[:2] >= (3, 8):
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -119,28 +118,5 @@ def start_bot():
 
     logger.info("Bot is running...")
 
-    app.run_polling()
-
-# ✅ Minimal HTTP server to keep Render alive
-class SimpleHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.end_headers()
-        message = "Bot is running!"
-        self.wfile.write(message.encode())
-
-# ✅ Start HTTP server in the main thread
-def start_http_server():
-    port = int(os.environ.get("PORT", 10000))  # Render sets PORT automatically
-    server = HTTPServer(("0.0.0.0", port), SimpleHandler)
-    logger.info(f"HTTP Server running on port {port}")
-    server.serve_forever()
-
-# ✅ Main entry point
-if __name__ == '__main__':
-    # Start the bot in a background thread
-    bot_thread = threading.Thread(target=start_bot)
-    bot_thread.start()
-
-    # Start the HTTP server (blocking)
-    start_http_server()
+    # Run the bot (sync)
+    app.run_polling()  # ✅ No asyncio.run here
