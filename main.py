@@ -39,29 +39,26 @@ async def approve_join_request(update: Update, context: ContextTypes.DEFAULT_TYP
 
 Welcome to 👑 *{chat.title}* 👑 
 
-🏆 Join our VIP and Get daily 🏆 
+       🏆 Join our vip and Get daily 🏆 
 
 〰〰〰〰〰〰〰〰〰〰〰〰〰〰
 
-▪️ 8–10 accurate signals (90% win rate)
-
-▪️ Fast deposit & withdrawal ♻️
-
-▪️ Free giveaways & strategies 📊
-
-▪️ Personal support anytime ✅
+▪️8–10 accurate signals (90% win rate) 
+▪️Fast deposit & withdrawal ♻️
+▪️Free giveaways & strategies 📊
+▪️Personal support anytime ✅
 
 💵 Start earning today 💵
 
-〰〰〰〰〰〰〰〰〰〰〰〰〰〰
+➖➖➖➖➖➖➖➖➖➖➖➖➖➖
 
-(1) Register from this link ⬇️
+(1) Register from this link  ⬇️ 
 
-👉 https://broker-qx.pro/sign-up/?lid=297045
+https://broker-qx.pro/sign-up/?lid=297045
 
-(2) Deposit minimum $30 or above 💱
+(2) Deposit minimum $30 or above 💰
 
-(3) Send your Trader ID : @jigar0648 ✅️
+(3) Send your Trader ID : @jigar0648
 
 𝗟𝗲𝘁'𝘀 𝗴𝗿𝗼𝘄 𝘁𝗼𝗴𝗲𝘁𝗵𝗲𝗿 😎 🤝
 """
