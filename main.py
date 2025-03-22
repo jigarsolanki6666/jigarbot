@@ -19,12 +19,12 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # ✅ Load environment variables
-#BOT_TOKEN = os.getenv("BOT_TOKEN")
-#CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
 # ✅ Your bot token from BotFather
-BOT_TOKEN = '7980614882:AAGqQzD55pC859_IIJfWgl2eN9H8DzUtX7s'  # Replace with your token
+#BOT_TOKEN = '7980614882:AAGqQzD55pC859_IIJfWgl2eN9H8DzUtX7s'  # Replace with your token
 # ✅ Your channel ID (must be a negative number, e.g., -100...)
-CHANNEL_ID = -1001244012856  # Replace with your channel ID
+#CHANNEL_ID = -1001244012856  # Replace with your channel ID
 
 # ✅ Function to approve join requests and send welcome DM
 async def approve_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
