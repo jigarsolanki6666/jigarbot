@@ -2,6 +2,8 @@ import logging
 import os
 import sys
 import asyncio
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     ApplicationBuilder,
@@ -103,8 +105,8 @@ async def handle_member_status(update: Update, context: ContextTypes.DEFAULT_TYP
         except Exception as e:
             logger.warning(f"Couldn't send farewell DM to {user.full_name}: {e}")
 
-# ✅ Run the bot
-if __name__ == '__main__':
+# ✅ Start the Telegram Bot in a thread
+def start_bot():
     # Fix for Windows event loop policy
     if sys.platform.startswith('win') and sys.version_info[:2] >= (3, 8):
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -117,5 +119,28 @@ if __name__ == '__main__':
 
     logger.info("Bot is running...")
 
-    # Run the bot (sync)
-    app.run_polling()  # ✅ No asyncio.run here
+    app.run_polling()
+
+# ✅ Minimal HTTP server to keep Render alive
+class SimpleHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        message = "Bot is running!"
+        self.wfile.write(message.encode())
+
+# ✅ Start HTTP server in the main thread
+def start_http_server():
+    port = int(os.environ.get("PORT", 10000))  # Render sets PORT automatically
+    server = HTTPServer(("0.0.0.0", port), SimpleHandler)
+    logger.info(f"HTTP Server running on port {port}")
+    server.serve_forever()
+
+# ✅ Main entry point
+if __name__ == '__main__':
+    # Start the bot in a background thread
+    bot_thread = threading.Thread(target=start_bot)
+    bot_thread.start()
+
+    # Start the HTTP server (blocking)
+    start_http_server()
