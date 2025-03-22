@@ -9,19 +9,22 @@ from telegram.ext import (
     ChatMemberHandler,
     ContextTypes,
 )
-import aiohttp
 from aiohttp import web
 
 # ✅ Configure logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(message)s'
+)
 logger = logging.getLogger(__name__)
 
-# ✅ Environment variables (Optional: Use os.getenv for production safety)
-
-BOT_TOKEN = os.getenv('BOT_TOKEN')
-CHANNEL_ID = int(os.getenv('CHANNEL_ID'))
-PORT = int(os.getenv("PORT", 10000))
-SELF_URL = os.getenv("SELF_URL", "https://jigarbot.onrender.com")  # Replace for Render
+# ✅ Load environment variables
+#BOT_TOKEN = os.getenv("BOT_TOKEN")
+#CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
+# ✅ Your bot token from BotFather
+BOT_TOKEN = '7980614882:AAGqQzD55pC859_IIJfWgl2eN9H8DzUtX7s'  # Replace with your token
+# ✅ Your channel ID (must be a negative number, e.g., -100...)
+CHANNEL_ID = -1001244012856  # Replace with your channel ID
 
 # ✅ Function to approve join requests and send welcome DM
 async def approve_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -38,13 +41,22 @@ Welcome to 👑 *{chat.title}* 👑
 
 🏆 Join our VIP and Get daily 🏆 
 
+〰〰〰〰〰〰〰〰〰〰〰〰〰〰
+
 ▪️ 8–10 accurate signals (90% win rate)
+
 ▪️ Fast deposit & withdrawal ♻️
+
 ▪️ Free giveaways & strategies 📊
+
 ▪️ Personal support anytime ✅
+
 💵 Start earning today 💵
 
+〰〰〰〰〰〰〰〰〰〰〰〰〰〰
+
 (1) Register from this link ⬇️
+
 👉 https://broker-qx.pro/sign-up/?lid=297045
 
 (2) Deposit minimum $30 or above 💱
@@ -81,6 +93,7 @@ async def handle_member_status(update: Update, context: ContextTypes.DEFAULT_TYP
 
     if status in ['left', 'kicked']:
         logger.info(f"{user.full_name} left or was kicked from the channel.")
+
         try:
             await context.bot.send_message(
                 chat_id=user.id,
@@ -91,48 +104,51 @@ async def handle_member_status(update: Update, context: ContextTypes.DEFAULT_TYP
         except Exception as e:
             logger.warning(f"Couldn't send farewell DM to {user.full_name}: {e}")
 
-# ✅ Simple health check endpoint for uptime monitoring
-async def handle_health(request):
-    return web.Response(text="✅ Bot is running!")
+# ✅ HTTP health check endpoint
+async def handle(request):
+    return web.Response(text="Bot is alive and running! 🚀")
 
-# ✅ Periodic ping to keep the app awake
-async def periodic_ping():
-    async with aiohttp.ClientSession() as session:
-        while True:
-            try:
-                async with session.get(f"{SELF_URL}/") as resp:
-                    logger.info(f"Pinged self: {resp.status}")
-            except Exception as e:
-                logger.warning(f"Ping failed: {e}")
-            await asyncio.sleep(60)  # Ping every 60 seconds
+async def run_web_server():
+    port = int(os.environ.get('PORT', 10000))  # Render usually gives you the PORT env
+    app = web.Application()
+    app.router.add_get('/', handle)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, '0.0.0.0', port)
+    await site.start()
+    logger.info(f"HTTP server running on port {port}")
 
-# ✅ Main function to run the bot and web server
+# ✅ Main function to run both bot and web server in parallel
 async def main():
-    # Windows event loop fix
-    if sys.platform.startswith('win') and sys.version_info[:2] >= (3, 8):
-        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-
+    # ✅ Create the application instance
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
-    # Add handlers
+    # ✅ Register handlers
     app.add_handler(ChatJoinRequestHandler(approve_join_request))
     app.add_handler(ChatMemberHandler(handle_member_status, ChatMemberHandler.CHAT_MEMBER))
 
-    # ✅ Start the web server
-    web_app = web.Application()
-    web_app.add_routes([web.get("/", handle_health)])
-    runner = web.AppRunner(web_app)
-    await runner.setup()
-    site = web.TCPSite(runner, port=PORT)
-    await site.start()
-    logger.info(f"Web server running on port {PORT}")
+    logger.info("Bot is starting...")
 
-    # ✅ Run bot and periodic pings together
-    await asyncio.gather(
-        app.run_polling(),
-        periodic_ping()
-    )
+    # ✅ Initialize and start the bot manually
+    await app.initialize()
+    await app.start()
+    await app.updater.start_polling()
 
-# ✅ Start the async main function
+    # ✅ Start the web server alongside the bot
+    await run_web_server()
+
+    # ✅ KEEP RUNNING FOREVER
+    stop_event = asyncio.Event()
+    await stop_event.wait()
+
+    # ✅ Graceful shutdown when you exit the process manually
+    await app.updater.stop()
+    await app.stop()
+    await app.shutdown()
+
+# ✅ Entry point
 if __name__ == '__main__':
+    if sys.platform.startswith('win') and sys.version_info[:2] >= (3, 8):
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
     asyncio.run(main())
