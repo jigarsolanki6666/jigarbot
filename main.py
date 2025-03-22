@@ -9,15 +9,19 @@ from telegram.ext import (
     ChatMemberHandler,
     ContextTypes,
 )
+import aiohttp
+from aiohttp import web
 
 # ✅ Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# ✅ Your bot token from BotFather
-BOT_TOKEN = '7980614882:AAGqQzD55pC859_IIJfWgl2eN9H8DzUtX7s'  # Replace with your token
-# ✅ Your channel ID (must be a negative number, e.g., -100...)
-CHANNEL_ID = -1001244012856  # Replace with your channel ID
+# ✅ Environment variables (Optional: Use os.getenv for production safety)
+
+BOT_TOKEN = os.getenv('BOT_TOKEN')
+CHANNEL_ID = int(os.getenv('CHANNEL_ID'))
+PORT = int(os.getenv("PORT", 10000))
+SELF_URL = os.getenv("SELF_URL", "https://your-app-name.onrender.com")  # Replace for Render
 
 # ✅ Function to approve join requests and send welcome DM
 async def approve_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -25,10 +29,8 @@ async def approve_join_request(update: Update, context: ContextTypes.DEFAULT_TYP
     chat = update.chat_join_request.chat
     logger.info(f"Join request from {user.full_name} in {chat.title}")
 
-    # Approve the request
     await update.chat_join_request.approve()
 
-    # Welcome message
     welcome_text = f"""
 👋 Hi {user.first_name}!
 
@@ -36,22 +38,13 @@ Welcome to 👑 *{chat.title}* 👑
 
 🏆 Join our VIP and Get daily 🏆 
 
-〰〰〰〰〰〰〰〰〰〰〰〰〰〰
-
 ▪️ 8–10 accurate signals (90% win rate)
-
 ▪️ Fast deposit & withdrawal ♻️
-
 ▪️ Free giveaways & strategies 📊
-
 ▪️ Personal support anytime ✅
-
 💵 Start earning today 💵
 
-〰〰〰〰〰〰〰〰〰〰〰〰〰〰
-
 (1) Register from this link ⬇️
-
 👉 https://broker-qx.pro/sign-up/?lid=297045
 
 (2) Deposit minimum $30 or above 💱
@@ -61,13 +54,11 @@ Welcome to 👑 *{chat.title}* 👑
 𝗟𝗲𝘁'𝘀 𝗴𝗿𝗼𝘄 𝘁𝗼𝗴𝗲𝘁𝗵𝗲𝗿 😎 🤝
 """
 
-    # Inline button for contacting Admin with pre-filled message
     keyboard = [
         [InlineKeyboardButton("👨‍💼 Admin", url="https://t.me/Jigar0648?text=I%20want%20to%20Join%20VIP")]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    # Send a welcome message to their DM
     try:
         await context.bot.send_message(
             chat_id=user.id,
@@ -85,15 +76,11 @@ async def handle_member_status(update: Update, context: ContextTypes.DEFAULT_TYP
     user = chat_member.from_user
     status = chat_member.new_chat_member.status
 
-    # Make sure it's the right channel
     if chat_member.chat.id != CHANNEL_ID:
         return
 
-    # Detect leaving or kicked status
     if status in ['left', 'kicked']:
         logger.info(f"{user.full_name} left or was kicked from the channel.")
-
-        # Send a farewell message to their DM
         try:
             await context.bot.send_message(
                 chat_id=user.id,
@@ -104,19 +91,48 @@ async def handle_member_status(update: Update, context: ContextTypes.DEFAULT_TYP
         except Exception as e:
             logger.warning(f"Couldn't send farewell DM to {user.full_name}: {e}")
 
-# ✅ Run the bot
-if __name__ == '__main__':
-    # Fix for Windows event loop policy
+# ✅ Simple health check endpoint for uptime monitoring
+async def handle_health(request):
+    return web.Response(text="✅ Bot is running!")
+
+# ✅ Periodic ping to keep the app awake
+async def periodic_ping():
+    async with aiohttp.ClientSession() as session:
+        while True:
+            try:
+                async with session.get(f"{SELF_URL}/") as resp:
+                    logger.info(f"Pinged self: {resp.status}")
+            except Exception as e:
+                logger.warning(f"Ping failed: {e}")
+            await asyncio.sleep(60)  # Ping every 60 seconds
+
+# ✅ Main function to run the bot and web server
+async def main():
+    # Windows event loop fix
     if sys.platform.startswith('win') and sys.version_info[:2] >= (3, 8):
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
-    # Handlers
+    # Add handlers
     app.add_handler(ChatJoinRequestHandler(approve_join_request))
     app.add_handler(ChatMemberHandler(handle_member_status, ChatMemberHandler.CHAT_MEMBER))
 
-    logger.info("Bot is running...")
+    # ✅ Start the web server
+    web_app = web.Application()
+    web_app.add_routes([web.get("/", handle_health)])
+    runner = web.AppRunner(web_app)
+    await runner.setup()
+    site = web.TCPSite(runner, port=PORT)
+    await site.start()
+    logger.info(f"Web server running on port {PORT}")
 
-    # Run the bot (sync)
-    app.run_polling()  # ✅ No asyncio.run here
+    # ✅ Run bot and periodic pings together
+    await asyncio.gather(
+        app.run_polling(),
+        periodic_ping()
+    )
+
+# ✅ Start the async main function
+if __name__ == '__main__':
+    asyncio.run(main())
