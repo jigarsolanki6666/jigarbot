@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 CHANNEL_ID = int(os.getenv('CHANNEL_ID'))
 PORT = int(os.getenv("PORT", 10000))
-SELF_URL = os.getenv("SELF_URL", "https://your-app-name.onrender.com")  # Replace for Render
+SELF_URL = os.getenv("SELF_URL", "https://jigarbot.onrender.com")  # Replace for Render
 
 # ✅ Function to approve join requests and send welcome DM
 async def approve_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
