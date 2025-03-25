@@ -24,6 +24,7 @@ CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
 RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL")  # Render injects this for web service
 WEBHOOK_PATH = "/telegram"  # You can customize if needed
 WEBHOOK_URL = f"{RENDER_EXTERNAL_URL}{WEBHOOK_PATH}" if RENDER_EXTERNAL_URL else ""
+WELCOME_IMAGE_URL = "1.jpg"  # Replace with a valid image URL
 
 app = None  # Global app reference for webhook processing
 
@@ -36,7 +37,7 @@ async def approve_join_request(update: Update, context: ContextTypes.DEFAULT_TYP
 
     await update.chat_join_request.approve()
 
-    welcome_text = f"""
+    welcome_caption = f"""
 👋 Hi {user.first_name}!
 
 Welcome to 👑 *{chat.title}* 👑 
@@ -65,9 +66,10 @@ https://broker-qx.pro/sign-up/?lid=297045
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     try:
-        await context.bot.send_message(
+        await context.bot.send_photo(
             chat_id=user.id,
-            text=welcome_text,
+            photo=WELCOME_IMAGE_URL,  # Image URL or file path
+            caption=welcome_caption,  # Text moved to caption
             parse_mode="Markdown",
             reply_markup=reply_markup
         )
