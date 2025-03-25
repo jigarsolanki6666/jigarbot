@@ -36,7 +36,7 @@ app = None  # Global app reference for webhook processing
 async def send_second_welcome_message(user_id, context: ContextTypes.DEFAULT_TYPE):
     # Caption for second message
     second_caption = """
-🔥 *Success Speaks – Profits Talk* 🔥
+*Success Speaks – Profits Talk* 🔥
 
 Our VIPs turned trades into dreams. Gadgets, lifestyle, freedom — all started with one choice  💸 💎
 
