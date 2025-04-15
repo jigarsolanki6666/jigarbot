@@ -24,52 +24,52 @@ CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
 RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL")  # Render injects this for web service
 WEBHOOK_PATH = "/telegram"  # You can customize if needed
 WEBHOOK_URL = f"{RENDER_EXTERNAL_URL}{WEBHOOK_PATH}" if RENDER_EXTERNAL_URL else ""
-WELCOME_IMAGE_URL = "1.jpg"  # Replace with a valid image URL
-SECOND_WELCOME_IMAGES = [
-    "2.jpg", "3.jpg", "4.jpg", "5.jpg",
-    "6.jpg", "7.jpg", "8.jpg", "9.jpg",
-]
+#WELCOME_IMAGE_URL = "1.jpg"  # Replace with a valid image URL
+#SECOND_WELCOME_IMAGES = [
+   # "2.jpg", "3.jpg", "4.jpg", "5.jpg",
+    #"6.jpg", "7.jpg", "8.jpg", "9.jpg",
+#]
 
 app = None  # Global app reference for webhook processing
 
 # ✅ Function to send the second welcome message with 8 images
-async def send_second_welcome_message(user_id, context: ContextTypes.DEFAULT_TYPE):
+#async def send_second_welcome_message(user_id, context: ContextTypes.DEFAULT_TYPE):
     # Caption for second message
-    second_caption = """
-*Success Speaks – Profits Talk* 🔥
+   # second_caption = """
+#*Success Speaks – Profits Talk* 🔥
 
-Our VIPs turned trades into dreams. Gadgets, lifestyle, freedom — all started with one choice  💸 💎
+#Our VIPs turned trades into dreams. Gadgets, lifestyle, freedom — all started with one choice  💸 💎
 
-Why not *YOU*? 😎
+#Why not *YOU*? 😎
 
-💰 *Join VIP | Start earning* 💰
+#💰 *Join VIP | Start earning* 💰
 
-🚀 *DM now | Limited slots:* @jigar0648
-    """
+#🚀 *DM now | Limited slots:* @jigar0648
+ #   """
 
     # Inline button for JOIN VIP
-    keyboard = [[InlineKeyboardButton("JOIN VIP 🔥", url="https://t.me/jigar0648")]]
-    reply_markup = InlineKeyboardMarkup(keyboard)
+  #  keyboard = [[InlineKeyboardButton("JOIN VIP 🔥", url="https://t.me/jigar0648")]]
+   # reply_markup = InlineKeyboardMarkup(keyboard)
 
     # Prepare media group (8 images)
-    media = [InputMediaPhoto(open(photo, 'rb')) for photo in SECOND_WELCOME_IMAGES]
+    #media = [InputMediaPhoto(open(photo, 'rb')) for photo in SECOND_WELCOME_IMAGES]
 
-    try:
+    #try:
         # Send images as an album
-        sent_media = await context.bot.send_media_group(chat_id=user_id, media=media)
+     #   sent_media = await context.bot.send_media_group(chat_id=user_id, media=media)
         
         # Edit the caption for the first image in the album
-        await context.bot.edit_message_caption(
-            chat_id=user_id,
-            message_id=sent_media[0].message_id,
-            caption=second_caption,
-            parse_mode="Markdown",
-            reply_markup=reply_markup
-        )
-        logger.info(f"Sent second welcome message to {user_id}")
+      #  await context.bot.edit_message_caption(
+       #     chat_id=user_id,
+        #    message_id=sent_media[0].message_id,
+         #   caption=second_caption,
+          #  parse_mode="Markdown",
+           # reply_markup=reply_markup
+        #)
+        #logger.info(f"Sent second welcome message to {user_id}")
     
-    except Exception as e:
-        logger.warning(f"Couldn't send second welcome message to {user_id}: {e}")
+    #except Exception as e:
+     #   logger.warning(f"Couldn't send second welcome message to {user_id}: {e}")
 
 
 # ✅ Function to approve join requests and send welcome DM
@@ -85,22 +85,23 @@ async def approve_join_request(update: Update, context: ContextTypes.DEFAULT_TYP
 
 Welcome to 👑 *{chat.title}* 👑 
 
-🏆 Join our VIP and Get daily 🏆 
+TRIED OTHER VIP CHANNELS AND STILL LOSING ? ⚠️  
 
-▪️ 8–10 accurate signals (90% win rate) 
-▪️ Fast deposit & withdrawal ♻️
-▪️ Free giveaways & strategies 📊
-▪️ Personal support anytime ✅
+BECAUSE THEIR METHODS ARE OUTDATED 😂🤙
 
-💵 Start earning today 💵
+🔹 JOIN TRADE WITH JIGAR’S VIP & GET :
 
-(1) Register from this link ⬇️ 
-https://broker-qx.pro/sign-up/?lid=297045
+◾ 8–10 LIVE SIGNALS DAILY WITH MULTIPLE EXPIRIES 👇
 
-(2) Deposit minimum $30 or above 💰
-(3) Send your Trader ID : @jigar0648
+( 1 MINUTE TO 1 HOUR | 90%+ WIN RATE ) 
 
-𝗟𝗲𝘁'𝘀 𝗴𝗿𝗼𝘄 𝘁𝗼𝗴𝗲𝘁𝗵𝗲𝗿 😎 🤝
+◾ SIGNALS POWERED BY MY PERSONAL AI SOFTWARE THAT TRACKS BROKER MANIPULATION AND TRAPS IN REAL-TIME 📊
+
+◾ FAST WITHDRAWALS + FULL SUPPORT 
+
+🔴 MESSAGE ME NOW – @JIGAR0648  
+
+TRADE SMART 📊 TRADE WITH JIGAR 🤝
 """
 
     keyboard = [
@@ -111,7 +112,7 @@ https://broker-qx.pro/sign-up/?lid=297045
     try:
         await context.bot.send_photo(
             chat_id=user.id,
-            photo=WELCOME_IMAGE_URL,  # Image URL or file path
+            #photo=WELCOME_IMAGE_URL,  # Image URL or file path
             caption=welcome_caption,  # Text moved to caption
             parse_mode="Markdown",
             reply_markup=reply_markup
