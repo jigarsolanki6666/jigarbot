@@ -2,7 +2,7 @@ import logging
 import os
 import sys
 import asyncio
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     ApplicationBuilder,
     ChatJoinRequestHandler,
@@ -24,52 +24,8 @@ CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
 RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL")  # Render injects this for web service
 WEBHOOK_PATH = "/telegram"  # You can customize if needed
 WEBHOOK_URL = f"{RENDER_EXTERNAL_URL}{WEBHOOK_PATH}" if RENDER_EXTERNAL_URL else ""
-#WELCOME_IMAGE_URL = "1.jpg"  # Replace with a valid image URL
-#SECOND_WELCOME_IMAGES = [
-   # "2.jpg", "3.jpg", "4.jpg", "5.jpg",
-    #"6.jpg", "7.jpg", "8.jpg", "9.jpg",
-#]
 
 app = None  # Global app reference for webhook processing
-
-# ✅ Function to send the second welcome message with 8 images
-#async def send_second_welcome_message(user_id, context: ContextTypes.DEFAULT_TYPE):
-    # Caption for second message
-   # second_caption = """
-#*Success Speaks – Profits Talk* 🔥
-
-#Our VIPs turned trades into dreams. Gadgets, lifestyle, freedom — all started with one choice  💸 💎
-
-#Why not *YOU*? 😎
-
-#💰 *Join VIP | Start earning* 💰
-
-#🚀 *DM now | Limited slots:* @jigar0648
- #   """
-
-    # Inline button for JOIN VIP
-  #  keyboard = [[InlineKeyboardButton("JOIN VIP 🔥", url="https://t.me/jigar0648")]]
-   # reply_markup = InlineKeyboardMarkup(keyboard)
-
-    # Prepare media group (8 images)
-    #media = [InputMediaPhoto(open(photo, 'rb')) for photo in SECOND_WELCOME_IMAGES]
-
-    #try:
-        # Send images as an album
-     #   sent_media = await context.bot.send_media_group(chat_id=user_id, media=media)
-        
-        # Edit the caption for the first image in the album
-      #  await context.bot.edit_message_caption(
-       #     chat_id=user_id,
-        #    message_id=sent_media[0].message_id,
-         #   caption=second_caption,
-          #  parse_mode="Markdown",
-           # reply_markup=reply_markup
-        #)
-        #logger.info(f"Sent second welcome message to {user_id}")
-    
-    #except Exception as e:
-     #   logger.warning(f"Couldn't send second welcome message to {user_id}: {e}")
 
 
 # ✅ Function to approve join requests and send welcome DM
@@ -80,7 +36,7 @@ async def approve_join_request(update: Update, context: ContextTypes.DEFAULT_TYP
 
     await update.chat_join_request.approve()
 
-    welcome_caption = f"""
+    welcome_text = f"""
 👋 Hi {user.first_name}!
 
 Welcome to 👑 *{chat.title}* 👑 
@@ -110,17 +66,13 @@ TRADE SMART 📊 TRADE WITH JIGAR 🤝
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     try:
-        await context.bot.send_photo(
+        await context.bot.send_message(
             chat_id=user.id,
-            #photo=WELCOME_IMAGE_URL,  # Image URL or file path
-            caption=welcome_caption,  # Text moved to caption
+            text=welcome_text,
             parse_mode="Markdown",
             reply_markup=reply_markup
         )
         logger.info(f"Sent welcome message to {user.full_name}")
-                        # Send second message with 8 images
-        await send_second_welcome_message(user.id, context)
-        
     except Exception as e:
         logger.warning(f"Couldn't send DM to {user.full_name}: {e}")
 
