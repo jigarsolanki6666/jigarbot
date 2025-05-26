@@ -39,21 +39,19 @@ async def approve_join_request(update: Update, context: ContextTypes.DEFAULT_TYP
     welcome_text = f"""
 👋 Hi {user.first_name}!
 
-Welcome to 👑 *{chat.title}* 👑 
-
 📊 WELCOME TO TRADE WITH JIGAR 📊
 
-WITH OUR AI SIGNAL SOFTWARE , MANY VIP MEMBERS ARE ACHIEVING 20% PROFIT DAILY AND DOUBLING THEIR MONEY IN JUST 5 DAYS 💰
+Do you have losses in trading ?
 
-1⃣  REGISTER NOW :👇
+Then don’t worry — I will help you recover it all 🤝
 
-https://broker-qx.pro/sign-up/?lid=297045
+Our VIP members are making 20% profit daily with highly accurate signals provided by my unique AI signal software 💻
 
-2⃣ DEPOSIT $30+ 💵
+So... ready to recover and grow fast ? 📈
 
-3⃣ SEND TRADER ID – @JIGAR0648  ✅
+Message me now : @JIGAR0648 ✅
 
-AFTER REGISTRATION I WILL GUIDE YOU PERSONALLY 👍
+Limited VIP spots — don’t miss out ⚠️
 
 """
 
