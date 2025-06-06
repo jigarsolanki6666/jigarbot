@@ -168,8 +168,7 @@ async def check_who_left(context: ContextTypes.DEFAULT_TYPE):
                             "Maybe it’s not the right time now — no worries 🤝\n\n"
                             "But remember , our VIP members are making daily profit and recovering losses using AI software - based signals 📊\n\n"
                             "( Whenever you're ready to start again )\n\n"
-                            "🔁 Join back here 👇\n\n"
-                            "https://t.me/+_feJE83TCNJlZmFl\n\n"
+                            "🔁 To join back , click on ✅ Join Channel Now button\n\n"
                             "🔹 Need help or have any questions ? \n\n"
                             "🔹 Message me : @JIGAR0648 ✅"
                         )
