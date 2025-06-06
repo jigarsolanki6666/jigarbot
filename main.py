@@ -39,7 +39,7 @@ async def approve_join_request(update: Update, context: ContextTypes.DEFAULT_TYP
     welcome_text = f"""
 👋 Hi {user.first_name}!
 
-📊 WELCOME TO TRADE WITH JIGAR 📊
+📊 WELCOME TO TRADE WITH JIGAR
 
 Do you have losses in trading ?
 
@@ -47,7 +47,7 @@ Then don’t worry — I will help you recover it all 🤝
 
 Our VIP members are making 20% profit daily with highly accurate signals provided by my unique AI signal software 💻
 
-So... ready to recover and grow fast ? 📈
+So... ready to recover and grow fast ?
 
 Message me now : @JIGAR0648 ✅
 
