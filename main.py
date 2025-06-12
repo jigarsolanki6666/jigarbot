@@ -88,19 +88,21 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
     welcome_text = f"""
 👋 Hi {user.first_name}!
 
-📊 WELCOME TO TRADE WITH JIGAR
+📊 TRADE WITH JIGAR 📊
 
-Do you have losses in trading ?
+Traders with big losses are now recovering fast and hitting daily profit goals after joining our VIP group 💰
 
-Then don’t worry — I will help you recover it all 🤝
+I use AI Signal Software to give sure-shot trades directly in the VIP group 👑
 
-Our VIP members are making 20% profit daily with highly accurate signals provided by my unique AI signal software 💻
+1⃣ Register now 👇
 
-So... ready to recover and grow fast ?
+https://market-qx.pro/sign-up/?lid=297045
 
-Message me now : @JIGAR0648 ✅
+2⃣ Deposit 30$ or above 💵
 
-Limited VIP spots — don’t miss out ⚠️
+3⃣ Send Trader ID – @JIGAR0648 ✅
+
+🔥 Join us | Recover fast | Earn daily 🔥
 
 """
 
