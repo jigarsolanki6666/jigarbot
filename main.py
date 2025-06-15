@@ -166,13 +166,14 @@ async def check_who_left(context: ContextTypes.DEFAULT_TYPE):
                         first_name = user_obj.first_name if user_obj else "there"
 
                         farewell_text = (
-                            f"📈 Hey {first_name}!  YOU JUST LEFT “ TRADE WITH JIGAR ”  \n\n"
-                            "Maybe it’s not the right time now — no worries 🤝\n\n"
-                            "But remember , our VIP members are making daily profit and recovering losses using AI software - based signals 📊\n\n"
-                            "( Whenever you're ready to start again )\n\n"
-                            "🔁 To join back , click on ✅ Join Channel Now button\n\n"
-                            "🔹 Need help or have any questions ? \n\n"
-                            "🔹 Message me : @JIGAR0648 ✅"
+    f"📈 Hey {first_name}!\n\n"
+    "YOU JUST LEFT “ TRADE WITH JIGAR ”\n\n"
+    "Maybe it’s not the right time now — no worries 🤝\n\n"
+    "But remember, our VIP members are making daily profit and recovering losses using AI software-based signals 📊\n\n"
+    "Whenever you're ready to start again, you can join back from here 👇\n\n"
+    "https://t.me/+_feJE83TCNJlZmFl\n\n"
+    "🔹 Need help or have any questions?\n\n"
+    "🔹 Message me : @JIGAR0648 ✅"
                         )
 
                         keyboard = InlineKeyboardMarkup(
