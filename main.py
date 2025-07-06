@@ -90,13 +90,13 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 📊 TRADE WITH JIGAR 📊
 
-Traders with big losses are now recovering fast and hitting daily profit goals after joining our VIP group 💰
+Traders with big losses are now recovering fast and achieving their daily profit targets after joining our VIP group 💰
 
-I use AI Signal Software to give sure-shot trades directly in the VIP group 👑
+We use AI Signal Software to give sure-shot trades directly in our VIP group 
 
 1⃣ Register now 👇
 
-https://market-qx.pro/sign-up/?lid=1413340
+https://market-qx.pro/sign-up/?lid=135630
 
 2⃣ Deposit 30$ or above 💵
 
