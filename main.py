@@ -96,7 +96,7 @@ We use AI Signal Software to give sure-shot trades directly in our VIP group
 
 1⃣ Register now 👇
 
-https://market-qx.pro/sign-up/?lid=135630
+https://market-qx.pro/sign-up/?lid=1413340
 
 2⃣ Deposit 30$ or above 💵
 
