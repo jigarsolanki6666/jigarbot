@@ -92,15 +92,7 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 Traders with big losses are now recovering fast and achieving their daily profit targets after joining our VIP group 💰
 
-We use AI Signal Software to give sure-shot trades directly in our VIP group 
-
-1⃣ Register now 👇
-
-https://market-qx.pro/sign-up/?lid=1413340
-
-2⃣ Deposit 30$ or above 💵
-
-3⃣ Send Trader ID – @JIGAR0648 ✅
+👉 Message me – @JIGAR0648 ✅
 
 🔥 Join us | Recover fast | Earn daily 🔥
 
@@ -282,3 +274,4 @@ if __name__ == "__main__":
     if sys.platform.startswith('win') and sys.version_info[:2] >= (3, 8):
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(main())
+
