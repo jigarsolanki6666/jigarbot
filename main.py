@@ -88,13 +88,20 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
     welcome_text = f"""
 👋 Hi {user.first_name}!
 
-📊 TRADE WITH JIGAR 📊
+👋 Welcome to Trade With Jigar
 
-Traders with big losses are now recovering fast and achieving their daily profit targets after joining our VIP group 💰
+Here you will get :
 
-👉 Message me – @JIGAR0648 ✅
+1️⃣ 📊 Quotex trading signals
+2️⃣ 📚 Simple trading learning
+3️⃣ 💰 Proper money management
+4️⃣ 🧠 Clear trading plan
 
-🔥 Join us | Recover fast | Earn daily 🔥
+📌 To join our VIP community, read the pinned messages of our official Telegram channel ⚠️
+
+🔗 Channel Link : https://t.me/+_feJE83TCNJlZmFl
+
+📊 Trade smart , not like gambling
 
 """
 
@@ -274,4 +281,5 @@ if __name__ == "__main__":
     if sys.platform.startswith('win') and sys.version_info[:2] >= (3, 8):
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(main())
+
 
