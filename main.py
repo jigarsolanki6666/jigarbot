@@ -90,17 +90,19 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 📊 TRADE WITH JIGAR 📊
 
-Traders with big losses are now recovering fast and achieving their daily profit targets after joining our VIP group 💰
+Many traders who were struggling are now recovering losses and achieving consistent daily profits with our VIP guidance 💰 
 
-1⃣ Register now 👇
+◾️Main Channel : https://t.me/+_feJE83TCNJlZmFl
 
-https://market-qx.pro/sign-up/?lid=1413340
+◾️ How to Join VIP 👇
 
-2⃣ Deposit 30$ or above 💵
+1️⃣ Register : https://broker-qx.pro/sign-up/?lid=1413340
 
-3⃣ Send Trader ID – @JIGAR0648 ✅
+2️⃣ Deposit $30 or more 💵
 
-🔥 Join us | Recover fast | Earn daily 🔥
+3️⃣ Send your Trader ID to @JIGAR0648 ✅
+
+Your next profitable trade could be just one step away. Join today and trade with confidence 😎 🤝
 
 """
 
