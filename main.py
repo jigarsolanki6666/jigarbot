@@ -12,7 +12,7 @@ from aiohttp import web
 import os
 import sys
 
-# 🔧 Bot token and channel ID from env
+# 🔧 Bot token and channel ID from envs
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
 RENDER_EXTERNAL_URL = "https://jigarbot.onrender.com"
