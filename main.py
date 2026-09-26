@@ -18,7 +18,7 @@ from contextlib import suppress
 # 🔧 Bot token and channel ID from envs
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
-RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "https://jigarbot.onrender.com").rstrip("/")
+RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "https://jigarbot-1.onrender.com").rstrip("/")
 WEBHOOK_PATH = "/telegram"
 WEBHOOK_URL = f"{RENDER_EXTERNAL_URL}{WEBHOOK_PATH}" if RENDER_EXTERNAL_URL else ""
 
