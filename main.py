@@ -7,15 +7,18 @@ from telegram.ext import (
     ApplicationBuilder,
     ChatJoinRequestHandler,
     ContextTypes,
+    CommandHandler,
 )
 from aiohttp import web
 import os
 import sys
+from types import SimpleNamespace
+from contextlib import suppress
 
 # 🔧 Bot token and channel ID from envs
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
-RENDER_EXTERNAL_URL = "https://jigarbot.onrender.com"
+RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "https://jigarbot.onrender.com").rstrip("/")
 WEBHOOK_PATH = "/telegram"
 WEBHOOK_URL = f"{RENDER_EXTERNAL_URL}{WEBHOOK_PATH}" if RENDER_EXTERNAL_URL else ""
 
@@ -66,25 +69,7 @@ def save_user(user_id: int):
             json.dump(users, f)
         logger.info(f"Saved user ID: {user_id}")
 
-async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.chat_join_request.from_user
-    chat = update.chat_join_request.chat
-
-    try:
-        await context.bot.approve_chat_join_request(chat.id, user.id)
-        logger.info(f"Approved join request from {user.id} ({user.full_name})")
-    except Exception as e:
-        logger.error(f"Failed to approve join request: {e}")
-        return
-
-    save_user(user.id)
-
-    left_users = load_json_file(LEFT_FILE)
-    if str(user.id) in left_users:
-        del left_users[str(user.id)]
-        save_json_file(LEFT_FILE, left_users)
-        logger.info(f"User {user.id} rejoined, removed from left_users")
-
+async def send_welcome_message(context, user, chat_id):
     welcome_text = f"""
 👋 Hi {user.first_name}!
 
@@ -113,14 +98,46 @@ Your next profitable trade could be just one step away. Join today and trade wit
 
     try:
         await context.bot.send_message(
-            chat_id=user.id,
+            chat_id=chat_id,
             text=welcome_text,
-            parse_mode="Markdown",
             reply_markup=reply_markup
         )
         logger.info(f"Sent welcome message to {user.full_name}")
     except Exception as e:
         logger.warning(f"Couldn't send DM to {user.full_name}: {e}")
+
+async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_chat and update.effective_chat.type == "private":
+        await send_welcome_message(context, update.effective_user, update.effective_chat.id)
+
+
+async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    request = update.chat_join_request
+    if request is None or request.chat.id != CHANNEL_ID:
+        return
+    user = request.from_user
+
+    # Telegram's temporary DM permission ends once the request is processed.
+    # A failed welcome must never prevent approval.
+    await send_welcome_message(context, user, request.user_chat_id)
+    try:
+        await context.bot.approve_chat_join_request(request.chat.id, user.id)
+        logger.info(f"Approved join request from {user.id} ({user.full_name})")
+    except Exception:
+        logger.exception(f"Failed to approve join request for {user.id}")
+        return
+
+    # A storage error must not interrupt welcome delivery or approval.
+    try:
+        save_user(user.id)
+        left_users = load_json_file(LEFT_FILE)
+        if str(user.id) in left_users:
+            del left_users[str(user.id)]
+            save_json_file(LEFT_FILE, left_users)
+            logger.info(f"User {user.id} rejoined, removed from left_users")
+    except Exception:
+        logger.exception(f"Could not save membership data for {user.id}")
+
 
 async def check_who_left(context: ContextTypes.DEFAULT_TYPE):
     init_file(USER_FILE, [])
@@ -220,9 +237,10 @@ async def handle_webhook(request):
     try:
         data = await request.json()
         update = Update.de_json(data, app.bot)
-        await app.process_update(update)
+        await app.update_queue.put(update)
     except Exception as e:
         logger.error(f"Failed to process update: {e}")
+        return web.Response(status=500, text="Update processing failed")
     return web.Response(text="OK")
 
 async def run_web_server():
@@ -235,6 +253,7 @@ async def run_web_server():
     site = web.TCPSite(runner, '0.0.0.0', port)
     await site.start()
     logger.info(f"HTTP server running on port {port}")
+    return runner
 
 # Keep-alive ping for Render or uptime services
 async def keep_alive_ping(url: str, interval: int = 30):
@@ -248,35 +267,58 @@ async def keep_alive_ping(url: str, interval: int = 30):
             logger.warning(f"[PING ERROR] {e}")
         await asyncio.sleep(interval)
 
+async def check_who_left_loop(application):
+    """Keep the existing reminders without requiring the optional JobQueue."""
+    context = SimpleNamespace(bot=application.bot)
+    await asyncio.sleep(10)
+    while True:
+        try:
+            await check_who_left(context)
+        except Exception:
+            logger.exception("Membership check failed; will retry next cycle")
+        await asyncio.sleep(60)
+
+
+async def log_error(update, context):
+    error = context.error
+    logger.error("Unhandled update error", exc_info=(type(error), error, error.__traceback__))
+
+
 async def main():
     global app
+    if not BOT_TOKEN:
+        raise RuntimeError("Set the BOT_TOKEN environment variable before starting the bot")
     app = ApplicationBuilder().token(BOT_TOKEN).build()
-
-    # Add your existing handlers unchanged
     app.add_handler(ChatJoinRequestHandler(handle_join_request))
+    app.add_handler(CommandHandler("start", start_command))
+    app.add_error_handler(log_error)
 
-    # Add your job to check who left every 60 seconds
-    app.job_queue.run_repeating(check_who_left, interval=60, first=10)
-
-    # Initialize and start bot
     await app.initialize()
-    await app.bot.set_webhook(WEBHOOK_URL)
     await app.start()
-
-    # Start aiohttp web server
-    await run_web_server()
-
-    # Start keep-alive pinger if URL provided
-    if RENDER_EXTERNAL_URL:
-        asyncio.create_task(keep_alive_ping(RENDER_EXTERNAL_URL))
-
-    # Keep running
-    stop_event = asyncio.Event()
-    await stop_event.wait()
-
-    # On shutdown
-    await app.stop()
-    await app.shutdown()
+    runner = None
+    background_tasks = []
+    try:
+        runner = await run_web_server()
+        await app.bot.set_webhook(
+            WEBHOOK_URL,
+            allowed_updates=["chat_join_request", "message"],
+            drop_pending_updates=False,
+        )
+        logger.info("Webhook registered at %s", WEBHOOK_URL)
+        background_tasks.append(asyncio.create_task(check_who_left_loop(app)))
+        if RENDER_EXTERNAL_URL:
+            background_tasks.append(asyncio.create_task(keep_alive_ping(RENDER_EXTERNAL_URL)))
+        await asyncio.Event().wait()
+    finally:
+        for task in background_tasks:
+            task.cancel()
+        for task in background_tasks:
+            with suppress(asyncio.CancelledError):
+                await task
+        if runner is not None:
+            await runner.cleanup()
+        await app.stop()
+        await app.shutdown()
 
 if __name__ == "__main__":
     if sys.platform.startswith('win') and sys.version_info[:2] >= (3, 8):
